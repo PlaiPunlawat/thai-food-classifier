@@ -1,6 +1,5 @@
 """Pytest configuration and fixtures."""
 import pytest
-import os
 import tempfile
 from unittest.mock import MagicMock, patch
 from index import app as flask_app
@@ -24,39 +23,35 @@ def client(app):
 
 
 @pytest.fixture
-def mock_mongo():
-    """Mock MongoDB client."""
-    with patch('index.get_mongo_client') as mock:
-        mock_db = MagicMock()
-        mock_db['requests'].count_documents.return_value = 0
-        mock_db['requests'].insert_one.return_value = None
-        mock_db['results'].insert_one.return_value = MagicMock(inserted_id='507f1f77bcf86cd799439011')
-        mock_db['results'].find_one.return_value = {
+def mock_db_service():
+    """Mock database service."""
+    with patch('src.api.routes.database_service') as mock:
+        mock.check_rate_limit.return_value = False
+        mock.log_request.return_value = None
+        mock.save_result.return_value = '507f1f77bcf86cd799439011'
+        mock.get_result.return_value = {
             '_id': '507f1f77bcf86cd799439011',
             'image_url': 'https://i.imgur.com/test.jpg',
             'predict_result': [
                 {'name_en': 'Pad Thai', 'name_th': 'ผัดไทย', 'percent': '95.23'}
             ]
         }
-        mock.return_value = mock_db
-        yield mock_db
+        yield mock
 
 
 @pytest.fixture
 def mock_imgur():
-    """Mock Imgur API response."""
-    with patch('requests.post') as mock:
-        mock.return_value.json.return_value = {
-            'data': {'link': 'https://i.imgur.com/test.jpg'}
-        }
+    """Mock image service."""
+    with patch('src.api.routes.image_service') as mock:
+        mock.upload_to_imgur.return_value = 'https://i.imgur.com/test.jpg'
         yield mock
 
 
 @pytest.fixture
 def mock_predict():
-    """Mock predict_image function."""
-    with patch('index.predict_image') as mock:
-        mock.return_value = [
+    """Mock prediction service."""
+    with patch('src.api.routes.prediction_service') as mock:
+        mock.predict_image.return_value = [
             {'name_en': 'Pad Thai', 'name_th': 'ผัดไทย', 'percent': '95.23'},
             {'name_en': 'Pad See Ew', 'name_th': 'ผัดซีอิ๊ว', 'percent': '2.15'},
             {'name_en': 'Drunken Noodles', 'name_th': 'ผัดขี้เมา', 'percent': '1.42'},
@@ -69,7 +64,6 @@ def mock_predict():
 @pytest.fixture
 def sample_image():
     """Create a sample image file for testing."""
-    # Create a minimal valid image file
     from PIL import Image
     import io
 

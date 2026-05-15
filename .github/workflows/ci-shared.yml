@@ -1,0 +1,50 @@
+name: Shared CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/shared/**"
+      - ".github/workflows/ci-shared.yml"
+  pull_request:
+    paths:
+      - "packages/shared/**"
+
+jobs:
+  validate-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Validate food_labels.json
+        run: |
+          python -c "
+          import json, sys
+
+          with open('packages/shared/food_labels.json', encoding='utf-8') as f:
+              labels = json.load(f)
+
+          errors = []
+
+          if len(labels) != 72:
+              errors.append(f'Expected 72 entries, got {len(labels)}')
+
+          ids = [entry['id'] for entry in labels]
+          if sorted(ids) != list(range(72)):
+              errors.append(f'IDs must be 0..71 with no gaps or duplicates')
+
+          for i, entry in enumerate(labels):
+              if not entry.get('name_th', '').strip():
+                  errors.append(f'Entry {i} has empty name_th')
+              if not entry.get('name_en', '').strip():
+                  errors.append(f'Entry {i} has empty name_en')
+
+          if errors:
+              for e in errors:
+                  print(f'ERROR: {e}', file=sys.stderr)
+              sys.exit(1)
+
+          print(f'food_labels.json: {len(labels)} entries validated OK')
+          "
