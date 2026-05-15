@@ -1,0 +1,141 @@
+
+
+// @primary-color: #987737;
+// @font-size-base: 16px;
+// @border-radius-base: 6px;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter&family=Kanit:wght@300&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+@font-face {
+  font-family: "naga";
+  src: url("/fonts/SOV_naga.ttf");
+}
+
+@font-face {
+  font-family: "NAKHARAT";
+  src: url("/fonts/MN NAKHARAT.ttf");
+}
+
+.font-naga {
+  font-family: 'naga', sans-serif;
+}
+
+.font-nakarat {
+  font-family: 'NAKHARAT', sans-serif;
+}
+
+.font-kanit {
+  font-family: 'Kanit', sans-serif;
+}
+
+.anticon svg {
+  vertical-align: initial;
+}
+
+img.ant-image-preview-img {
+  display: initial;
+}
+
+.table :where(thead, tfoot) :where(th, td) {
+  font-size: initial;
+}
+
+button {
+  background-color: #987737;
+}
+
+.content {
+  // min-height: calc(100vh - 64px);
+  min-height: 100vh;
+}
+
+.hero {
+  min-height: calc(100vh - 64px);
+}
+
+.ant-steps-item-title::after {
+  background-color: #666 !important;
+}
+
+.fade-enter {
+  opacity: 0;
+  animation-duration: .5s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.55, 0, 0.55, 0.2);
+  animation-play-state: paused;
+}
+
+.fade-appear {
+  opacity: 0;
+  animation-duration: .5s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.55, 0, 0.55, 0.2);
+  animation-play-state: paused;
+}
+
+.fade-leave {
+  animation-duration: .5s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.55, 0, 0.55, 0.2);
+  animation-play-state: paused;
+}
+
+.fade-enter.fade-enter-active {
+  animation-name: fadeIn;
+  animation-play-state: running;
+}
+
+.fade-appear.fade-appear-active {
+  animation-name: fadeIn;
+  animation-play-state: running;
+}
+
+.fade-leave.fade-leave-active {
+  animation-name: fadeOut;
+  animation-play-state: running;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.custom-shape-divider-bottom-1670007665 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-bottom-1670007665 svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 75px;
+}
+
+.custom-shape-divider-bottom-1670007665 .shape-fill {
+  fill: #121212;
+}
