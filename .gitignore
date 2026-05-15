@@ -20,6 +20,7 @@ build/
 *.pkl
 *.pt
 *.onnx
+apps/api/models/
 
 # IDE
 .idea/
