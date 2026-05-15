@@ -1,0 +1,36 @@
+services:
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  api:
+    build:
+      context: ..
+      dockerfile: infra/api.Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      MONGO_URI: mongodb://mongo:27017/
+      MONGO_DATABASE: thai_food_api
+      IMGUR_CLIENT_ID: ${IMGUR_CLIENT_ID}
+      HF_MODEL_REPO: PlaiPunlawat/thai-food-classifier
+    depends_on:
+      - mongo
+
+  web:
+    build:
+      context: ..
+      dockerfile: infra/web.Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_ENDPOINT: http://localhost:5000/api
+      NEXT_PUBLIC_PUBLIC_BASE_URL: http://localhost:3000
+    depends_on:
+      - api
+
+volumes:
+  mongo_data:
