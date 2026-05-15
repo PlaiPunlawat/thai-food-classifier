@@ -1,16 +1,11 @@
 """Image prediction service using ML models."""
+import os
 import numpy as np
-from huggingface_hub import hf_hub_download
 from keras.models import load_model
 from keras.preprocessing import image as keras_image
-from food_labels import FOOD_LABELS as food_names
+from src.config.food_names import food_names
 from src.config.settings import Config
 from src.utils.logger import logger
-
-_MODEL_FILES = {
-    "xception": "Xception.h5",
-    "mobilenet": "MobileNet.h5",
-}
 
 
 class PredictionService:
@@ -21,20 +16,28 @@ class PredictionService:
         self.models = {}
         self.image_size = Config.IMAGE_SIZE
 
-    def _get_model_path(self, model_name):
-        """Download model from HF Hub if needed, return local path."""
-        filename = _MODEL_FILES[model_name]
-        return hf_hub_download(
-            repo_id=Config.HF_MODEL_REPO,
-            filename=filename,
-            cache_dir=Config.MODEL_CACHE_DIR,
-        )
-
     def _load_model(self, model_name='xception'):
+        """
+        Load ML model from disk (cached).
+
+        Args:
+            model_name: Model to load ('xception' or 'mobilenet')
+
+        Returns:
+            Loaded Keras model
+        """
         if model_name in self.models:
             return self.models[model_name]
 
-        model_path = self._get_model_path(model_name)
+        if model_name == 'mobilenet':
+            model_path = Config.MOBILENET_MODEL
+        else:
+            model_path = Config.XCEPTION_MODEL
+
+        if not os.path.exists(model_path):
+            logger.error(f"Model file not found: {model_path}")
+            raise FileNotFoundError(f"Model file not found: {model_path}")
+
         logger.info(f"Loading model: {model_name} from {model_path}")
         model = load_model(model_path)
         self.models[model_name] = model

@@ -24,8 +24,9 @@ class Config:
     RATE_LIMIT_WINDOW_MINUTES = 1
 
     # Models
-    HF_MODEL_REPO = os.getenv('HF_MODEL_REPO', 'PlaiPunlawat/thai-food-classifier')
-    MODEL_CACHE_DIR = os.getenv('MODEL_CACHE_DIR', os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'models'))
+    MODEL_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'models')
+    MOBILENET_MODEL = os.path.join(MODEL_PATH, 'MobileNet.h5')
+    XCEPTION_MODEL = os.path.join(MODEL_PATH, 'Xception.h5')
     DEFAULT_MODEL = 'xception'
 
     # Image Processing

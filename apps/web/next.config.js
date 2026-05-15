@@ -7,10 +7,8 @@ const withTM = require("next-transpile-modules")(["antd-img-crop"]);
 const nextConfig = {
   reactStrictMode: true,
   compiler: {
+    // Enables the styled-components SWC transform
     styledComponents: true,
-  },
-  experimental: {
-    esmExternals: "loose",
   },
 };
 

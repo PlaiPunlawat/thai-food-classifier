@@ -1,8 +1,4 @@
 Flask==2.0.0
-Werkzeug<3.0
-Jinja2<4.0
-itsdangerous<3.0
-click<9.0
 Flask_Cors==3.0.10
 keras==2.11.0
 keras_nightly==2.5.0.dev2021032900
@@ -13,4 +9,3 @@ python-dotenv==0.21.0
 requests==2.26.0
 tensorflow==2.11.0
 pillow==9.3.0
-huggingface_hub

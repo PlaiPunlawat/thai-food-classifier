@@ -1,0 +1,27 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'
+
+    - name: Deployment notification
+      if: success()
+      run: |
+        echo "Deployment successful!"
