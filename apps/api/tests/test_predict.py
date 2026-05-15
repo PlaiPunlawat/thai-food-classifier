@@ -26,7 +26,7 @@ class TestPredictImage:
             with patch('predict.load_model') as mock_load:
                 mock_model = MagicMock()
                 # Mock prediction to return probabilities for 75 classes
-                mock_predictions = np.zeros((1, 75))
+                mock_predictions = np.zeros((1, 72))
                 mock_predictions[0, 0] = 0.95  # Highest probability for first class
                 mock_predictions[0, 1] = 0.02
                 mock_predictions[0, 2] = 0.01
@@ -68,7 +68,7 @@ class TestPredictImage:
         try:
             with patch('predict.load_model') as mock_load:
                 mock_model = MagicMock()
-                mock_predictions = np.zeros((1, 75))
+                mock_predictions = np.zeros((1, 72))
                 mock_predictions[0, 10] = 0.85
 
                 mock_model.predict.return_value = mock_predictions
@@ -98,7 +98,7 @@ class TestPredictImage:
             with patch('predict.load_model') as mock_load:
                 mock_model = MagicMock()
                 # Create random predictions for all 75 classes
-                mock_predictions = np.random.rand(1, 75)
+                mock_predictions = np.random.rand(1, 72)
                 mock_predictions = mock_predictions / mock_predictions.sum()  # Normalize
 
                 mock_model.predict.return_value = mock_predictions
@@ -130,7 +130,7 @@ class TestPredictImage:
         try:
             with patch('predict.load_model') as mock_load:
                 mock_model = MagicMock()
-                mock_predictions = np.zeros((1, 75))
+                mock_predictions = np.zeros((1, 72))
                 mock_predictions[0, 0] = 0.95234
                 mock_predictions[0, 1] = 0.02156
 
@@ -155,10 +155,10 @@ class TestFoodNames:
 
     def test_food_names_structure(self):
         """Test that food names are properly structured."""
-        from foodnames import food_names
+        from food_labels import FOOD_LABELS as food_names
 
         assert isinstance(food_names, list)
-        assert len(food_names) == 75
+        assert len(food_names) == 72
 
         # Check structure of each entry
         for food in food_names:
@@ -172,7 +172,7 @@ class TestFoodNames:
 
     def test_food_names_uniqueness(self):
         """Test that food names are unique."""
-        from foodnames import food_names
+        from food_labels import FOOD_LABELS as food_names
 
         english_names = [f['name_en'] for f in food_names]
         thai_names = [f['name_th'] for f in food_names]

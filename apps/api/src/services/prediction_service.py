@@ -3,7 +3,7 @@ import os
 import numpy as np
 from keras.models import load_model
 from keras.preprocessing import image as keras_image
-from src.config.food_names import food_names
+from food_labels import FOOD_LABELS as food_names
 from src.config.settings import Config
 from src.utils.logger import logger
 
