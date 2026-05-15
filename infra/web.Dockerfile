@@ -5,13 +5,11 @@ WORKDIR /app
 RUN npm install -g pnpm
 
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
-COPY apps/web/package.json ./apps/web/
-RUN pnpm install --frozen-lockfile
-
 COPY apps/web/ ./apps/web/
 COPY packages/shared/ ./packages/shared/
 
-WORKDIR /app/apps/web
+RUN pnpm install --frozen-lockfile
+
 EXPOSE 3000
 
-CMD ["pnpm", "dev"]
+CMD ["pnpm", "--filter", "web", "dev"]
