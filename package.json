@@ -1,0 +1,9 @@
+{
+  "name": "thai-food-classifier",
+  "private": true,
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "cd apps/api && python index.py",
+    "build:web": "pnpm --filter web build"
+  }
+}
