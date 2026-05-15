@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY apps/api/ ./apps/api/
 COPY packages/shared/ ./packages/shared/
 
-ENV PYTHONPATH=/app
+ENV PYTHONPATH=/app:/app/packages/shared
 
 WORKDIR /app/apps/api
 EXPOSE 5000

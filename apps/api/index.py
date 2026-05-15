@@ -1,9 +1,4 @@
 """Thai Food Image Classification API - Main Application."""
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "packages" / "shared"))
-
 from flask import Flask
 import tempfile
 from flask_cors import CORS, cross_origin

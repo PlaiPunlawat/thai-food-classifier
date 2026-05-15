@@ -1,8 +1,5 @@
-import sys
 import os
 from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "packages" / "shared"))
 
 import numpy as np
 from huggingface_hub import hf_hub_download
