@@ -7,4 +7,4 @@ export interface FoodLabel {
   name_en_alt: string[];
 }
 
-export const FOOD_LABELS: FoodLabel[] = data.labels as FoodLabel[];
+export const FOOD_LABELS: FoodLabel[] = data as FoodLabel[];

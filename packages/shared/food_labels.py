@@ -16,8 +16,7 @@ _LABELS_PATH = Path(__file__).parent / "food_labels.json"
 
 def load_labels() -> list[FoodLabel]:
     with open(_LABELS_PATH, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data["labels"]
+        return json.load(f)
 
 
 FOOD_LABELS: list[FoodLabel] = load_labels()
