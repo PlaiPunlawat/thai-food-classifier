@@ -104,7 +104,7 @@ def predict_image(image_path: str, model_name: str = 'xception') -> list:
         model_name: Model to use ('xception' or 'mobilenet')
 
     Returns:
-        List of predictions with confidence scores
+        List of predictions with name_en, name_th, and percent fields
     """
     pass
 ```

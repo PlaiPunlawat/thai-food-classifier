@@ -46,14 +46,9 @@ This project was developed as part of **PROJECT IN DATA SCIENCE AND BUSINESS ANA
 
 ## 🚀 Getting Started
 
-### 1. Clone the repository
+This app lives at `apps/web/` within the [thai-food-classifier](../../README.md) monorepo. To run it standalone (without Docker):
 
-```bash
-git clone https://github.com/yourusername/thai-food-image-classification-web.git
-cd thai-food-image-classification-web
-```
-
-### 2. Install dependencies
+### 1. Install dependencies
 
 ```bash
 npm install
@@ -106,7 +101,7 @@ yarn start
 ## 📁 Project Structure
 
 ```
-thai-food-image-classification-web/
+apps/web/
 ├── components/          # React components
 │   ├── Navbar.jsx      # Navigation bar component
 │   ├── PredictImage.jsx # Image upload and prediction component
@@ -137,7 +132,7 @@ thai-food-image-classification-web/
 2. **Upload an image** - Either drag & drop, click to browse, or paste from clipboard
 3. **Select ML model** (optional) - Choose between Xception or MobileNet
 4. **Wait for results** - The image will be processed by the AI model
-5. **View predictions** - See the top predicted Thai food dishes with confidence scores
+5. **View predictions** - See the top predicted Thai food dishes with prediction percentages
 6. **Share results** - Use the unique URL to share your results
 
 ## 🔌 API Integration
@@ -155,13 +150,12 @@ Upload an image for classification
 **Response:**
 ```json
 {
-  "resultId": "unique-id",
+  "resultId": "507f1f77bcf86cd799439011",
   "predict_result": [
-    {
-      "food_name": "Tom Yum Kung",
-      "confidence": 0.95
-    }
-  ]
+    { "name_en": "Pad Thai", "name_th": "ผัดไทย", "percent": "95.23" }
+  ],
+  "status": "success",
+  "message": "uploaded successfully"
 }
 ```
 
@@ -178,7 +172,7 @@ Get prediction result by ID
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+See [CONTRIBUTING.md](../../CONTRIBUTING.md) in the monorepo root for contribution guidelines.
 
 ## 📄 License
 

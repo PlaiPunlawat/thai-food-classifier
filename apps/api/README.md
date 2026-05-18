@@ -1,6 +1,6 @@
 # Thai Food Image Classification API
 
-A REST API service that uses deep learning to automatically identify Thai dishes from uploaded images. The API leverages pre-trained Keras/TensorFlow models (MobileNet and Xception) to classify 75 different Thai food dishes with confidence scores.
+A REST API service that uses deep learning to automatically identify Thai dishes from uploaded images. The API leverages pre-trained Keras/TensorFlow models (MobileNet and Xception) to classify 72 different Thai food dishes, returning predictions with percentage scores in both Thai and English.
 
 ## Features
 
@@ -29,14 +29,9 @@ A REST API service that uses deep learning to automatically identify Thai dishes
 
 ## Installation
 
-### 1. Clone the repository
+This service lives at `apps/api/` within the [thai-food-classifier](../../README.md) monorepo. To run it standalone (without Docker):
 
-```bash
-git clone https://github.com/PlaiPunlawat/thai-food-image-classification-api.git
-cd thai-food-image-classification-api
-```
-
-### 2. Create a virtual environment
+### 1. Create a virtual environment
 
 ```bash
 python -m venv venv
@@ -200,16 +195,16 @@ curl http://localhost:5000/api/result/507f1f77bcf86cd799439011
 
 ## Supported Thai Dishes
 
-The API can classify 75 different Thai dishes including:
+The API can classify 72 different Thai dishes including:
 
 - Pad Thai (ผัดไทย)
 - Tom Yum Goong (ต้มยำกุ้ง)
 - Green Curry (แกงเขียวหวาน)
 - Massaman Curry (แกงมัสมั่น)
 - Som Tam (ส้มตำ)
-- And 70 more...
+- And 67 more...
 
-See `foodnames.py` for the complete list.
+See `packages/shared/food_labels.json` in the monorepo root for the complete list.
 
 ## Model Information
 
@@ -251,16 +246,21 @@ Add these environment variables in your Vercel project settings:
 ### Project Structure
 
 ```
-thai-food-image-classification-api/
-├── index.py              # Flask application and API routes
-├── predict.py            # Image classification logic
-├── foodnames.py          # Thai food names database
+apps/api/
+├── index.py              # Flask application entry point
+├── src/
+│   ├── api/
+│   │   └── routes.py    # API route handlers
+│   ├── config/
+│   │   └── food_names.py # Label config (imports from packages/shared)
+│   └── services/
+│       ├── prediction_service.py  # Model loading and inference
+│       ├── database_service.py    # MongoDB operations
+│       └── image_service.py       # Imgur upload
 ├── requirements.txt      # Python dependencies
 ├── vercel.json          # Vercel deployment config
 ├── .env.example         # Environment template
-└── models/
-    ├── MobileNet.h5     # MobileNet model weights
-    └── Xception.h5      # Xception model weights
+└── models/              # .gitignored; populated from HF Hub at runtime
 ```
 
 ### Running in Development Mode
@@ -314,13 +314,7 @@ Solution: Try using MobileNet instead of Xception (smaller model)
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+See [CONTRIBUTING.md](../../CONTRIBUTING.md) in the monorepo root for contribution guidelines.
 
 ## License
 
