@@ -3,6 +3,7 @@ import os
 import numpy as np
 from keras.models import load_model
 from keras.preprocessing import image as keras_image
+from huggingface_hub import hf_hub_download
 from src.config.food_names import food_names
 from src.config.settings import Config
 from src.utils.logger import logger
@@ -18,7 +19,7 @@ class PredictionService:
 
     def _load_model(self, model_name='xception'):
         """
-        Load ML model from disk (cached).
+        Load ML model from disk (cached). Downloads from HF Hub if missing.
 
         Args:
             model_name: Model to load ('xception' or 'mobilenet')
@@ -31,12 +32,23 @@ class PredictionService:
 
         if model_name == 'mobilenet':
             model_path = Config.MOBILENET_MODEL
+            hf_filename = 'MobileNet.h5'
         else:
             model_path = Config.XCEPTION_MODEL
+            hf_filename = 'Xception.h5'
 
         if not os.path.exists(model_path):
-            logger.error(f"Model file not found: {model_path}")
-            raise FileNotFoundError(f"Model file not found: {model_path}")
+            logger.info(
+                f"Model file not found locally, downloading {hf_filename} "
+                f"from {Config.HF_MODEL_REPO}..."
+            )
+            os.makedirs(os.path.dirname(model_path), exist_ok=True)
+            hf_hub_download(
+                repo_id=Config.HF_MODEL_REPO,
+                filename=hf_filename,
+                local_dir=Config.MODEL_PATH,
+            )
+            logger.info(f"Download complete: {hf_filename}")
 
         logger.info(f"Loading model: {model_name} from {model_path}")
         model = load_model(model_path)
@@ -76,7 +88,7 @@ class PredictionService:
                 result = {
                     'name_en': food_names[idx]['name_en'],
                     'name_th': food_names[idx]['name_th'],
-                    'percent': f'{confidence:.2f}'
+                    'percent': round(confidence, 2)
                 }
                 results.append(result)
 

@@ -1,5 +1,6 @@
 Flask==2.0.0
 Flask_Cors==3.0.10
+huggingface_hub>=0.21.0
 keras==2.11.0
 keras_nightly==2.5.0.dev2021032900
 Keras_Preprocessing==1.1.2

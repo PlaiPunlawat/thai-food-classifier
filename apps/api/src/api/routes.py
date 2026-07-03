@@ -3,6 +3,7 @@ import os
 import uuid
 import tempfile
 from flask import request, jsonify
+from src.config.settings import Config
 from src.services.prediction_service import prediction_service
 from src.services.image_service import image_service
 from src.services.database_service import database_service
@@ -52,8 +53,15 @@ def upload_image():
         # Predict
         predict_result = prediction_service.predict_image(file_path, model=model)
 
-        # Upload to Imgur
-        image_url = image_service.upload_to_imgur(file_path)
+        # Upload to Imgur (optional — skip if no client ID configured)
+        image_url = None
+        if Config.IMGUR_CLIENT_ID:
+            try:
+                image_url = image_service.upload_to_imgur(file_path)
+            except Exception as e:
+                logger.warning(f"Imgur upload failed, continuing without image URL: {e}")
+        else:
+            logger.info("IMGUR_CLIENT_ID not set, skipping image upload")
 
         # Clean up temporary file
         if os.path.exists(file_path):

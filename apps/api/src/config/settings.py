@@ -29,6 +29,9 @@ class Config:
     XCEPTION_MODEL = os.path.join(MODEL_PATH, 'Xception.h5')
     DEFAULT_MODEL = 'xception'
 
+    # Hugging Face Hub
+    HF_MODEL_REPO = os.getenv('HF_MODEL_REPO', 'PlaiPunlawat/thai-food-classifier')
+
     # Image Processing
     IMAGE_SIZE = (128, 128)
 
