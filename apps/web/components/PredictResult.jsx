@@ -44,13 +44,13 @@ export default function PredictResult({
               className={clsx("mx-auto")}
             />
           </div>
-          {(predictResult && predictResult[0] && predictResult[0].confident > 80) ||
+          {(predictResult && predictResult[0] && predictResult[0].percent > 80) ||
           viewResultEvenNotCorrect ? (
             <div className="mx-4 my-auto text-center">
               <div className="text-2xl font-bold mb-4">We think this is...</div>
-              <div className="text-7xl font-bold mb-4 font-nakarat">{predictResult[0].name}</div>
+              <div className="text-7xl font-bold mb-4 font-nakarat">{predictResult[0].name_en}</div>
               <div className="text-2xl font-bold mb-4 font-kanit">
-                {predictResult[0].name} ({predictResult[0].name_th})
+                {predictResult[0].name_en} ({predictResult[0].name_th})
               </div>
 
               {!selfTry && (
@@ -106,8 +106,8 @@ export default function PredictResult({
                       <Bar
                         data={predictResult.map((item) => {
                           return {
-                            name: item.name + "\n" + item.name_th,
-                            percentage: Math.round((item.confident + Number.EPSILON) * 100) / 100,
+                            name: item.name_en + "\n" + item.name_th,
+                            percentage: item.percent,
                           };
                         })}
                         xField="percentage"
@@ -125,7 +125,7 @@ export default function PredictResult({
                           position: "middle",
                         }}
                         color={({ name }) => {
-                          return name === predictResult[0].name + "\n" + predictResult[0].name_th
+                          return name === predictResult[0].name_en + "\n" + predictResult[0].name_th
                             ? "#379861"
                             : "#987737";
                         }}
