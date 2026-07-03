@@ -10,10 +10,16 @@ __pycache__/
 .venv/
 venv/
 env/
-.env
 *.egg-info/
+*.egg
+.installed.cfg
 dist/
 build/
+sdist/
+wheels/
+eggs/
+.eggs/
+downloads/
 
 # Model weights
 *.h5
@@ -35,13 +41,16 @@ Thumbs.db
 desktop.ini
 
 # Next.js
-apps/web/.next/
+.next/
 apps/web/out/
 
 # Testing
 .coverage
+coverage.xml
+*.cover
 htmlcov/
 .pytest_cache/
+.hypothesis/
 
 # Logs
 *.log
@@ -55,6 +64,12 @@ pnpm-debug.log*
 
 # Docker
 mongo_data/
+
+# Temporary / scratch files
+*.tmp
+.temp/
+preprocess_test.py
+test.jpg
 
 # Migration plan (internal reference only)
 MIGRATION_PLAN.md

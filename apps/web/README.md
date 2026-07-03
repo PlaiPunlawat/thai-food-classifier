@@ -41,7 +41,7 @@ This project was developed as part of **PROJECT IN DATA SCIENCE AND BUSINESS ANA
 
 ## 📋 Prerequisites
 
-- Node.js 14+ or Yarn
+- Node.js 22+ and pnpm
 - Backend API server running (see Environment Variables section)
 
 ## 🚀 Getting Started
@@ -51,9 +51,7 @@ This app lives at `apps/web/` within the [thai-food-classifier](../../README.md)
 ### 1. Install dependencies
 
 ```bash
-npm install
-# or
-yarn install
+pnpm install
 ```
 
 ### 3. Configure environment variables
@@ -81,9 +79,7 @@ NEXT_PUBLIC_API_ENDPOINT=http://localhost:5000/api
 ### 4. Run the development server
 
 ```bash
-npm run dev
-# or
-yarn dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
@@ -91,11 +87,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the a
 ### 5. Build for production
 
 ```bash
-npm run build
-npm run start
-# or
-yarn build
-yarn start
+pnpm build
+pnpm start
 ```
 
 ## 📁 Project Structure
