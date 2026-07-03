@@ -23,7 +23,7 @@ jobs:
           cache: "pip"
           cache-dependency-path: apps/api/requirements.txt
       - run: pip install -r apps/api/requirements.txt
-      - run: pip install pytest
+      - run: pip install pytest pytest-cov
       - run: pytest apps/api/tests/ -v
         env:
           PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/packages/shared
