@@ -45,13 +45,14 @@ with `image_url: null` until a real Client ID is registered.
 Future work: Replace Imgur with Cloudinary (free 25 GB) or Cloudflare
 R2 (free 10 GB, zero egress). Estimated effort: ~30 min.
 
-## Preprocessing divergence (D5 — awaiting human verification)
+## Resolved — Preprocessing (D5)
 
-Legacy `predict.py` applies `xception.preprocess_input` **then** `/255`
-(double-scaling). The current `PredictionService` applies only `/255`.
-Which matches the original training is unverified. Plai must check the
-training notebook; if unavailable, empirically compare both paths on
-5–10 known dish photos and keep whichever gives sane top-1 accuracy.
+The original 2022 training pipeline applied `xception.preprocess_input`
+**then** `/255` (double-scaling). Verified empirically 04 Jul 2026:
+mango sticky rice predicted correctly at ~100% with double-scaling;
+plain `/255` alone was confidently wrong. Inference now replicates the
+training pipeline. Do NOT normalize to a single scaling step — the
+model weights depend on this exact transform.
 
 ## Model file size — Xception.h5 is 333 MB
 
