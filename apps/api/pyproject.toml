@@ -7,7 +7,6 @@ dependencies = [
     "Flask-Cors==3.0.10",
     "huggingface_hub>=0.21.0",
     "keras==2.11.0",
-    "keras-nightly==2.5.0.dev2021032900",
     "Keras-Preprocessing==1.1.2",
     "numpy==1.23.5",
     "pymongo==4.3.3",

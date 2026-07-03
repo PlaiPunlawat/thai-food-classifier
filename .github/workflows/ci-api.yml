@@ -23,7 +23,7 @@ jobs:
       - uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
-          cache-dependency-path: apps/api/uv.lock
+          cache-dependency-glob: apps/api/uv.lock
       - run: cd apps/api && uv sync --locked --dev
       - run: cd apps/api && uv run pytest tests/ -v
         env:

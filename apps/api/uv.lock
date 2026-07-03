@@ -453,14 +453,6 @@ wheels = [
 ]
 
 [[package]]
-name = "keras-nightly"
-version = "2.5.0.dev2021032900"
-source = { registry = "https://pypi.org/simple" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/aa/e7/53bc896aa4e11a87aac10a625c676b3a3d57d1c8d9929e4809d31fa0b7d5/keras_nightly-2.5.0.dev2021032900-py2.py3-none-any.whl", hash = "sha256:6ba70f738f4008222de7e7fdd5b2b18c48c49b897a9fca54c844854e25964011", size = 1245993, upload-time = "2021-03-29T08:06:18.449Z" },
-]
-
-[[package]]
 name = "keras-preprocessing"
 version = "1.1.2"
 source = { registry = "https://pypi.org/simple" }
@@ -933,7 +925,6 @@ dependencies = [
     { name = "itsdangerous", marker = "sys_platform == 'linux'" },
     { name = "jinja2", marker = "sys_platform == 'linux'" },
     { name = "keras", marker = "sys_platform == 'linux'" },
-    { name = "keras-nightly", marker = "sys_platform == 'linux'" },
     { name = "keras-preprocessing", marker = "sys_platform == 'linux'" },
     { name = "numpy", marker = "sys_platform == 'linux'" },
     { name = "pillow", marker = "sys_platform == 'linux'" },
@@ -963,7 +954,6 @@ requires-dist = [
     { name = "itsdangerous", specifier = "==2.0.1" },
     { name = "jinja2", specifier = "==3.0.3" },
     { name = "keras", specifier = "==2.11.0" },
-    { name = "keras-nightly", specifier = "==2.5.0.dev2021032900" },
     { name = "keras-preprocessing", specifier = "==1.1.2" },
     { name = "numpy", specifier = "==1.23.5" },
     { name = "pillow", specifier = "==9.3.0" },
