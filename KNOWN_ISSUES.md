@@ -2,15 +2,15 @@
 
 ## Known issues (pre-existing, not caused by migration)
 
-- **tests/test_api.py**: 9 tests reference `index.get_mongo_client` which
-  was refactored into `src/services/database_service.py` before the
-  monorepo migration. Tests need their mocks updated to patch
-  `src.services.database_service.get_mongo_client`. Must be fixed
-  before enabling CI in Phase 4.
+- ~~**tests/test_api.py**: 9 tests reference `index.get_mongo_client`~~
+  **RESOLVED** in Phase 4 — mocks updated to patch
+  `src.api.routes.database_service` / `prediction_service` /
+  `image_service` singletons as imported in routes. All 23 tests pass.
 
 - ~~**tests/test_predict.py (TestPredictImage)**: 4 tests fail because
-  `predict.py` calls `load_model()` at module level.~~ **RESOLVED** in
-  Phase 5 — model loading deferred to `PredictionService._load_model()`.
+  `predict.py` calls `load_model()` at module level.~~ **RESOLVED** —
+  `test_predict.py` deleted in Phase 3 (tested removed `predict.py`);
+  replaced by `test_prediction_service.py` in Phase 4.
 
 ## Resolved in Phase 6
 
