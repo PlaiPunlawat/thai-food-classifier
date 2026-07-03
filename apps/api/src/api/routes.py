@@ -51,7 +51,7 @@ def upload_image():
         model = request.form.get('model', 'xception')
 
         # Predict
-        predict_result = prediction_service.predict_image(file_path, model=model)
+        predict_result = prediction_service.predict_image(file_path, model_name=model)
 
         # Upload to Imgur (optional — skip if no client ID configured)
         image_url = None
