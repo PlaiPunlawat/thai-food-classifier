@@ -7,6 +7,7 @@ from huggingface_hub import hf_hub_download
 from src.config.food_names import food_names
 from src.config.settings import Config
 from src.utils.logger import logger
+from keras.applications.xception import preprocess_input
 
 
 class PredictionService:
@@ -72,8 +73,13 @@ class PredictionService:
             # Load and preprocess image
             img = load_img(image_path, target_size=self.image_size)
             img_array = img_to_array(img)
+            # Match the original 2022 training pipeline: preprocess_input ([-1,1])
+            # followed by /255. This double-scaling looks like a bug, but the models
+            # were TRAINED with it — do NOT "fix" to plain /255 or preprocess_input
+            # alone, or predictions become confidently wrong. Verified 04 Jul 2026
+            # (see KNOWN_ISSUES.md, D5).
+            img_array = preprocess_input(img_array) / 255.0
             img_array = np.expand_dims(img_array, axis=0)
-            img_array = img_array / 255.0  # Normalize
 
             # Load model and predict
             model = self._load_model(model_name)
