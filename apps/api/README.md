@@ -6,7 +6,7 @@ A REST API service that uses deep learning to automatically identify Thai dishes
 
 - **Deep Learning Classification**: Uses state-of-the-art CNN models (MobileNet/Xception)
 - **Dual Language Support**: Returns predictions in both Thai and English
-- **Image Hosting**: Automatically uploads images to Imgur
+- **Image Hosting**: Optionally uploads images to Imgur (skipped if no client ID configured)
 - **Rate Limiting**: Built-in protection (3 requests per IP per minute)
 - **Result Storage**: MongoDB integration for storing predictions
 - **RESTful API**: Simple HTTP endpoints for easy integration
@@ -130,27 +130,27 @@ curl -X POST http://localhost:5000/api/upload \
     {
       "name_en": "Pad Thai",
       "name_th": "ผัดไทย",
-      "percent": "95.23"
+      "percent": 95.23
     },
     {
       "name_en": "Pad See Ew",
       "name_th": "ผัดซีอิ๊ว",
-      "percent": "2.15"
+      "percent": 2.15
     },
     {
       "name_en": "Drunken Noodles",
       "name_th": "ผัดขี้เมา",
-      "percent": "1.42"
+      "percent": 1.42
     },
     {
       "name_en": "Fried Rice",
       "name_th": "ข้าวผัด",
-      "percent": "0.89"
+      "percent": 0.89
     },
     {
       "name_en": "Tom Yum",
       "name_th": "ต้มยำ",
-      "percent": "0.31"
+      "percent": 0.31
     }
   ],
   "status": "success",
@@ -183,7 +183,7 @@ curl http://localhost:5000/api/result/507f1f77bcf86cd799439011
     {
       "name_en": "Pad Thai",
       "name_th": "ผัดไทย",
-      "percent": "95.23"
+      "percent": 95.23
     }
   ],
   "image_url": "https://i.imgur.com/abc123.jpg"

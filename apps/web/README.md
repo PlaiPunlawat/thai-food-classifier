@@ -152,7 +152,7 @@ Upload an image for classification
 {
   "resultId": "507f1f77bcf86cd799439011",
   "predict_result": [
-    { "name_en": "Pad Thai", "name_th": "ผัดไทย", "percent": "95.23" }
+    { "name_en": "Pad Thai", "name_th": "ผัดไทย", "percent": 95.23 }
   ],
   "status": "success",
   "message": "uploaded successfully"
