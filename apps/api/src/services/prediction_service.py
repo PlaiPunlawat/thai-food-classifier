@@ -2,7 +2,7 @@
 import os
 import numpy as np
 from keras.models import load_model
-from keras.preprocessing import image as keras_image
+from keras.utils import load_img, img_to_array
 from huggingface_hub import hf_hub_download
 from src.config.food_names import food_names
 from src.config.settings import Config
@@ -70,8 +70,8 @@ class PredictionService:
         """
         try:
             # Load and preprocess image
-            img = keras_image.load_img(image_path, target_size=self.image_size)
-            img_array = keras_image.img_to_array(img)
+            img = load_img(image_path, target_size=self.image_size)
+            img_array = img_to_array(img)
             img_array = np.expand_dims(img_array, axis=0)
             img_array = img_array / 255.0  # Normalize
 
