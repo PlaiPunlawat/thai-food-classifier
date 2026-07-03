@@ -14,6 +14,13 @@
   "dependencies": {
     "@ant-design/charts": "^1.4.2",
     "@ant-design/icons": "^4.8.0",
+    "@ant-design/plots": "^1.2.6",
+    "@antv/g2plot": "^2.2.11",
+    "@antv/g2": "^4.2.12",
+    "@antv/g-base": "^0.5.11",
+    "@antv/path-util": "^3.0.1",
+    "d3-interpolate": "^3.0.1",
+    "lodash-es": "^4.17.21",
     "antd": "^5.0.3",
     "antd-img-crop": "^4.5.2",
     "axios": "^1.2.0",
