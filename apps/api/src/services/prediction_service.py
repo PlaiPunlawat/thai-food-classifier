@@ -67,7 +67,10 @@ class PredictionService:
             top_k: Number of top predictions to return
 
         Returns:
-            List of top K predictions with names and confidence scores
+            list[dict]: Top K predictions, each containing:
+                - name_en (str): English dish name
+                - name_th (str): Thai dish name
+                - percent (float): Confidence score 0–100, rounded to 2 dp
         """
         try:
             # Load and preprocess image
