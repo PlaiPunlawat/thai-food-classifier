@@ -19,7 +19,7 @@ A monorepo for the Thai food image classification system. Upload a photo of a Th
 
 - **Web** (Next.js 13, React 18) — image upload UI, result display, shareable URLs
 - **API** (Flask 2.0, TensorFlow 2.11) — classification inference, rate limiting, result storage
-- **Models** — MobileNet (~17 MB) and Xception (~333 MB), downloaded from Hugging Face Hub at runtime
+- **Models** — MobileNet (~44 MB) and Xception (~333 MB), downloaded from Hugging Face Hub at runtime
 
 ## Quick Start
 
@@ -30,21 +30,24 @@ Prerequisites: Docker and Docker Compose installed.
 git clone https://github.com/PlaiPunlawat/thai-food-classifier.git
 cd thai-food-classifier
 
-# Copy environment file and add your Imgur Client ID
+# Copy environment file and add your Imgur Client ID (optional)
 cp .env.example .env
 
 # Start all services (MongoDB + API + Web)
 cd infra
-docker compose up --build
+docker compose up --build -d
 ```
 
 Once running:
 
-- Frontend: <http://localhost:3000>
-- API: <http://localhost:5000>
+- Frontend: <http://localhost:3000> (production build served by `next start`)
+- API: <http://localhost:5000> (gunicorn, 1 worker + 4 threads)
 - MongoDB: localhost:27017
 
-On first API request, model weights are downloaded from Hugging Face Hub (one-time, cached locally).
+**First prediction** triggers a one-time model download from Hugging Face Hub
+into a persistent Docker volume (`hf_models`). MobileNet is ~44 MB; Xception
+is ~333 MB. Subsequent container restarts reuse the cached weights — no
+re-download occurs.
 
 See [KNOWN_ISSUES.md](KNOWN_ISSUES.md) for current limitations including the Imgur placeholder.
 

@@ -17,6 +17,14 @@ services:
       MONGO_DATABASE: thai_food_api
       IMGUR_CLIENT_ID: ${IMGUR_CLIENT_ID}
       HF_MODEL_REPO: PlaiPunlawat/thai-food-classifier
+    volumes:
+      - hf_models:/app/apps/api/models
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     depends_on:
       - mongo
 
@@ -30,7 +38,9 @@ services:
       NEXT_PUBLIC_API_ENDPOINT: http://localhost:5000/api
       NEXT_PUBLIC_PUBLIC_BASE_URL: http://localhost:3000
     depends_on:
-      - api
+      api:
+        condition: service_healthy
 
 volumes:
   mongo_data:
+  hf_models:

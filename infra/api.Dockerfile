@@ -22,4 +22,4 @@ ENV PATH="/app/apps/api/.venv/bin:$PATH"
 WORKDIR /app/apps/api
 EXPOSE 5000
 
-CMD ["python", "index.py"]
+CMD ["gunicorn", "-w", "1", "--threads", "4", "--timeout", "300", "-b", "0.0.0.0:5000", "index:app"]
