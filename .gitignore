@@ -71,7 +71,3 @@ mongo_data/
 preprocess_test.py
 test.jpg
 
-# Migration plan (internal reference only)
-MIGRATION_PLAN.md
-REFACTOR_PLAN.md
-KNOWN_ISSUES.md

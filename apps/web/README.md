@@ -1,146 +1,72 @@
-# WhatKind? ThaiFood! 🍜
+# Thai Food Classifier — Web Frontend
 
-A web application that uses machine learning to identify different types of Thai food from images. Built to help tourists and foreigners discover and learn about Thai cuisine.
+A Next.js application for uploading food photos and displaying classification results. Supports drag-and-drop, clipboard paste, image cropping, and shareable result URLs.
 
-![Next.js](https://img.shields.io/badge/Next.js-13-black?logo=next.js)
-![React](https://img.shields.io/badge/React-18-blue?logo=react)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-38bdf8?logo=tailwindcss)
+## Tech Stack
 
-## 🎓 Project Background
+- **Framework:** Next.js 13 (React 18)
+- **Styling:** Tailwind CSS, DaisyUI, Ant Design
+- **Charts:** Ant Design Charts
+- **HTTP Client:** Axios
 
-This project was developed as part of **PROJECT IN DATA SCIENCE AND BUSINESS ANALYTICS 2** (Course Code: 06026128) in the 1st semester of academic year 2022 at the School of Information Technology, King Mongkut's Institute of Technology Ladkrabang.
+## Getting Started
 
-### Team Members
-- **Punlawat Leecharoen** - Data Science and Business Analytics Student
-- **Smith Cheablam** - Data Science and Business Analytics Student
+This app lives at `apps/web/` within the [thai-food-classifier](../../README.md) monorepo. Uses **pnpm** (not npm or yarn).
 
-### Advisor
-- **Asst. Prof. Dr. Somkiat Wangsiripitak** - School of Information Technology, KMITL
-
-## ✨ Features
-
-- **Image Upload**: Drag-and-drop or paste images from clipboard
-- **Multiple ML Models**: Choose between Xception (default) or MobileNet models
-- **Image Cropping**: Crop images for better prediction accuracy
-- **Real-time Progress**: Upload and processing progress indicators
-- **Responsive Design**: Works seamlessly on mobile and desktop devices
-- **Result Sharing**: Share prediction results via unique URLs
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **Framework**: Next.js 13 (React 18)
-- **Styling**: Tailwind CSS, DaisyUI, Ant Design
-- **UI Components**: Ant Design, Ant Design Charts
-- **Image Processing**: antd-img-crop
-- **HTTP Client**: Axios
-
-### Machine Learning Models
-- **Xception** - High accuracy model (default)
-- **MobileNet** - Lightweight model for faster predictions
-
-## 📋 Prerequisites
-
-- Node.js 22+ and pnpm
-- Backend API server running (see Environment Variables section)
-
-## 🚀 Getting Started
-
-This app lives at `apps/web/` within the [thai-food-classifier](../../README.md) monorepo. To run it standalone (without Docker):
-
-### 1. Install dependencies
+### Install dependencies
 
 ```bash
+# From repo root
 pnpm install
 ```
 
-### 3. Configure environment variables
-
-Create a `.env.local` file in the root directory:
+### Configure environment
 
 ```bash
 cp .env.example .env.local
 ```
 
-Edit `.env.local` and set the following variables:
+| Variable | Description | Default |
+| -------- | ----------- | ------- |
+| `NEXT_PUBLIC_API_ENDPOINT` | Backend API base URL | `http://localhost:5000/api` |
+| `NEXT_PUBLIC_PUBLIC_BASE_URL` | Public URL of this app (for sharing) | `http://localhost:3000` |
 
-```env
-NEXT_PUBLIC_PUBLIC_BASE_URL=http://localhost:3000
-NEXT_PUBLIC_API_ENDPOINT=http://localhost:5000/api
-```
+**Build-time inlining:** Variables prefixed with `NEXT_PUBLIC_` are baked into the JavaScript bundle at `next build` time. Changing them at runtime (e.g., via Docker Compose `environment:`) has no effect on the built output — they must be set as build args in the Dockerfile.
 
-#### Environment Variables Explained
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_PUBLIC_BASE_URL` | Base URL of the web application | `http://localhost:3000` |
-| `NEXT_PUBLIC_API_ENDPOINT` | Backend API endpoint for image classification | `http://localhost:5000/api` |
-
-### 4. Run the development server
+### Development
 
 ```bash
-pnpm dev
+pnpm --filter web dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
-
-### 5. Build for production
+### Production build
 
 ```bash
-pnpm build
-pnpm start
+pnpm --filter web build
+pnpm --filter web start
 ```
 
-## 📁 Project Structure
+## Pages
 
-```
-apps/web/
-├── components/          # React components
-│   ├── Navbar.jsx      # Navigation bar component
-│   ├── PredictImage.jsx # Image upload and prediction component
-│   └── PredictResult.jsx # Results display component
-├── lib/                # Utility functions and helpers
-│   ├── api.js         # API client and configuration
-│   ├── constants.js   # Application constants
-│   └── utils.js       # Helper functions
-├── pages/             # Next.js pages (routes)
-│   ├── _app.js       # App wrapper and global config
-│   ├── index.js      # Home page
-│   ├── predict.js    # Prediction page
-│   ├── about.js      # About page
-│   └── result/       # Dynamic result pages
-│       └── [resultId].js
-├── public/           # Static assets
-│   ├── images/      # Image files
-│   └── fonts/       # Custom fonts
-├── styles/          # Global styles
-│   ├── globals.less # Global LESS styles
-│   └── tailwind.css # Tailwind CSS imports
-└── next.config.js   # Next.js configuration
-```
+| Route | File | Description |
+| ----- | ---- | ----------- |
+| `/` | `pages/index.js` | Landing page |
+| `/predict` | `pages/predict.js` | Image upload and model selection |
+| `/result/[resultId]` | `pages/result/[resultId].js` | Shareable prediction result |
+| `/about` | `pages/about.js` | Project information |
 
-## 🎨 Usage
+## Components
 
-1. **Navigate to the Upload page** - Click "Get Started" or "Upload" in the navigation
-2. **Upload an image** - Either drag & drop, click to browse, or paste from clipboard
-3. **Select ML model** (optional) - Choose between Xception or MobileNet
-4. **Wait for results** - The image will be processed by the AI model
-5. **View predictions** - See the top predicted Thai food dishes with prediction percentages
-6. **Share results** - Use the unique URL to share your results
+| Component | Purpose |
+| --------- | ------- |
+| `Navbar.jsx` | Navigation bar |
+| `PredictImage.jsx` | Image upload (drag-drop, paste, crop) |
+| `PredictResult.jsx` | Result display with chart and top-5 predictions |
 
-## 🔌 API Integration
+## API Contract
 
-This frontend application requires a backend API server. The API should provide the following endpoints:
+The frontend expects the API to return predictions in this shape:
 
-### POST `/upload`
-Upload an image for classification
-
-**Request:**
-- `Content-Type: multipart/form-data`
-- `image`: Image file (PNG, JPG, JPEG, max 5MB)
-- `model`: Model name (`xception` or `mobilenet`)
-
-**Response:**
 ```json
 {
   "resultId": "507f1f77bcf86cd799439011",
@@ -152,37 +78,34 @@ Upload an image for classification
 }
 ```
 
-### GET `/result/:resultId`
-Get prediction result by ID
+Fields per prediction: `name_en` (string), `name_th` (string), `percent` (float, 0–100).
 
-**Response:**
-```json
-{
-  "image_url": "https://...",
-  "predict_result": [...]
-}
+## Project Structure
+
+```text
+apps/web/
+├── components/
+│   ├── Navbar.jsx
+│   ├── PredictImage.jsx
+│   └── PredictResult.jsx
+├── lib/
+│   ├── api.js            # Axios instance + API base URL
+│   ├── constants.js      # App constants
+│   └── utils.js          # Helper functions
+├── pages/
+│   ├── _app.js           # Global layout and providers
+│   ├── index.js          # Landing page
+│   ├── predict.js        # Upload page
+│   ├── about.js          # About page
+│   └── result/
+│       └── [resultId].js # Dynamic result page
+├── public/               # Static assets (images, fonts)
+├── styles/               # Global CSS / Tailwind
+├── next.config.js        # Next.js configuration
+├── package.json
+└── .env.example
 ```
 
-## 🤝 Contributing
+## Contributing
 
-See [CONTRIBUTING.md](../../CONTRIBUTING.md) in the monorepo root for contribution guidelines.
-
-## 📄 License
-
-This project is part of an academic course project. Please contact the authors for usage permissions.
-
-## 📧 Contact
-
-For questions or feedback, please contact:
-- Punlawat Leecharoen
-- Smith Cheablam
-
-## 🙏 Acknowledgments
-
-- Asst. Prof. Dr. Somkiat Wangsiripitak for project guidance
-- King Mongkut's Institute of Technology Ladkrabang
-- School of Information Technology
-
----
-
-Built with ❤️ for Thai food lovers around the world
+See [CONTRIBUTING.md](../../CONTRIBUTING.md) in the monorepo root.

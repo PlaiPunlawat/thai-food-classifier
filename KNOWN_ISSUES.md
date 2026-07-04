@@ -1,61 +1,47 @@
 # Known Issues
 
-## Known issues (pre-existing, not caused by migration)
+## Permanent invariants
 
-- ~~**tests/test_api.py**: 9 tests reference `index.get_mongo_client`~~
-  **RESOLVED** in Phase 4 — mocks updated to patch
-  `src.api.routes.database_service` / `prediction_service` /
-  `image_service` singletons as imported in routes. All 23 tests pass.
-
-- ~~**tests/test_predict.py (TestPredictImage)**: 4 tests fail because
-  `predict.py` calls `load_model()` at module level.~~ **RESOLVED** —
-  `test_predict.py` deleted in Phase 3 (tested removed `predict.py`);
-  replaced by `test_prediction_service.py` in Phase 4.
-
-## Resolved in Phase 6
-
-- **TF 2.11 / Keras 3 compat** — resolved by pinning Werkzeug<3.0 and
-  related deps in the containerised environment.
-
-- **food_labels import path fragility** — resolved by setting
-  `PYTHONPATH=/app:/app/packages/shared` in api.Dockerfile, removing
-  brittle `sys.path.insert()` hacks.
-
-## Resolved in Phase 1
-
-- ~~**API crashes at startup: food_names import**~~ — `food_names.py`
-  rewritten as a thin adapter over `packages/shared/food_labels.json`
-  (the SSOT). Prediction service now indexes a list of dicts correctly.
-  Label order verified to match the legacy numpy array.
-
-- ~~**No model download code**~~ — `PredictionService._load_model()` now
-  downloads from Hugging Face Hub (`PlaiPunlawat/thai-food-classifier`)
-  on first prediction if `.h5` file is missing. `huggingface_hub` added
-  to dependencies.
-
-- ~~**Imgur upload unconditional**~~ — upload is now skipped when
-  `IMGUR_CLIENT_ID` is unset or empty; failures are caught and logged
-  without killing the prediction. `image_url` is `null` in that case.
-
-## Imgur integration — pending real Client ID
-
-The IMGUR_CLIENT_ID in .env is a placeholder. Predictions will succeed
-with `image_url: null` until a real Client ID is registered.
-
-Future work: Replace Imgur with Cloudinary (free 25 GB) or Cloudflare
-R2 (free 10 GB, zero egress). Estimated effort: ~30 min.
-
-## Resolved — Preprocessing (D5)
-
+**Preprocessing double-scaling — DO NOT CHANGE.**
 The original 2022 training pipeline applied `xception.preprocess_input`
-**then** `/255` (double-scaling). Verified empirically 04 Jul 2026:
-mango sticky rice predicted correctly at ~100% with double-scaling;
-plain `/255` alone was confidently wrong. Inference now replicates the
-training pipeline. Do NOT normalize to a single scaling step — the
-model weights depend on this exact transform.
+(maps pixels to [-1, 1]) **then** `/255`. This produces inputs in
+[-1/255, 1/255]. The model weights depend on this exact transform.
+Verified empirically 04 Jul 2026: predictions are confidently wrong
+without the double-scaling. A regression test in
+`apps/api/tests/test_prediction_service.py` pins the expected range.
+Do NOT normalize to a single scaling step.
 
-## Model file size — Xception.h5 is 333 MB
+## Open issues
 
-Larger than originally documented (~88 MB). Likely includes optimizer
-state. Future work: re-save with model.save_weights() to drop
-optimizer state, ~75% size reduction expected.
+- **Imgur Client ID is a placeholder.** Predictions succeed with
+  `image_url: null` until a real Client ID is registered at
+  <https://api.imgur.com/oauth2/addclient>. Future work: replace Imgur
+  with Cloudflare R2 (free 10 GB, zero egress) or Cloudinary (free 25 GB).
+
+- **Xception.h5 is 333 MB (includes optimizer state).** Expected size
+  without optimizer state is ~85 MB. Future work: re-save with
+  `model.save_weights()` to drop optimizer state (~75% size reduction).
+
+- **Rate limiter uses `request.remote_addr`.** Behind a reverse proxy
+  (nginx, Cloudflare), all requests appear from the gateway IP. Future
+  work: respect `X-Forwarded-For` and make limits configurable via env.
+
+## Resolved (archive)
+
+- API crashes at startup due to `food_names` import mismatch — fixed by
+  rewriting `food_names.py` as adapter over `packages/shared/food_labels.json`.
+- No model download code existed — added HF Hub download in `PredictionService._load_model()`.
+- Imgur upload was unconditional — made optional (skipped when `IMGUR_CLIENT_ID` unset).
+- API-Web response contract mismatch (`item.name`/`item.confident` vs
+  `name_en`/`name_th`/`percent`) — unified across API, web, and both READMEs.
+- Legacy standalone-repo artifacts (nested `.github/`, `vercel.json`, `setup.py`,
+  duplicate lockfiles) — deleted in cleanup phase.
+- Test suite broken (9 tests referenced moved `index.get_mongo_client`) — all 23
+  tests rewritten to patch singletons at import site.
+- Dependencies declared 3x (`requirements.txt`, `pyproject.toml`, `setup.py`) —
+  consolidated to single `pyproject.toml` + `uv.lock`.
+- `web.Dockerfile` ran `pnpm dev` in production — replaced with multi-stage build
+  and `next start`.
+- TF 2.11 / Keras compat issues — resolved by pinning deps and removing ghost
+  `keras-nightly` dependency.
+- `food_labels` import path fragility — resolved via `PYTHONPATH` in Dockerfile.

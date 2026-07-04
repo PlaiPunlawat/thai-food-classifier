@@ -1,4 +1,4 @@
-"""API route handlers."""
+"""API route handlers for image upload, prediction, and result retrieval."""
 import os
 import uuid
 import tempfile
@@ -17,10 +17,10 @@ def upload_image():
     Returns:
         JSON response with prediction results
     """
-    # Get client IP
+    # Rate limit: 3 req/min per IP. Behind a reverse proxy (or Docker's
+    # default bridge), remote_addr is the gateway — not the real client.
     ip_address = request.remote_addr
 
-    # Check rate limit
     if database_service.check_rate_limit(ip_address):
         logger.warning(f"Rate limit exceeded for {ip_address}")
         return jsonify({'message': 'Too many requests'}), 429
