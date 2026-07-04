@@ -1,23 +1,12 @@
-[build-system]
-requires = ["setuptools>=45", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "thai-food-image-classification-api"
+name = "thai-food-api"
 version = "1.0.0"
-description = "REST API for Thai food image classification using deep learning"
-readme = "README.md"
-requires-python = ">=3.8"
-license = {text = "MIT"}
-authors = [
-    {name = "Thai Food API Contributors"}
-]
+requires-python = ">=3.10,<3.11"
 dependencies = [
     "Flask==2.0.0",
     "Flask-Cors==3.0.10",
     "huggingface_hub>=0.21.0",
     "keras==2.11.0",
-    "keras-nightly==2.5.0.dev2021032900",
     "Keras-Preprocessing==1.1.2",
     "numpy==1.23.5",
     "pymongo==4.3.3",
@@ -25,9 +14,12 @@ dependencies = [
     "requests==2.26.0",
     "tensorflow==2.11.0",
     "pillow==9.3.0",
+    "Werkzeug==2.0.3",
+    "Jinja2==3.0.3",
+    "itsdangerous==2.0.1",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pytest==7.4.3",
     "pytest-cov==4.1.0",
@@ -38,12 +30,12 @@ dev = [
     "mypy==1.8.0",
 ]
 
-[tool.setuptools]
-packages = ["src", "src.api", "src.services", "src.config", "src.utils"]
+[tool.uv]
+environments = ["sys_platform == 'linux'"]
 
 [tool.black]
 line-length = 100
-target-version = ['py38', 'py39', 'py310', 'py311']
+target-version = ['py310']
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -51,11 +43,7 @@ exclude = '''
   | \.venv
   | venv
   | env
-  | ENV
-  | build
-  | dist
   | __pycache__
-  | \.eggs
   | \.pytest_cache
 )/
 '''
@@ -65,8 +53,12 @@ testpaths = ["tests"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
-addopts = "-v --strict-markers --cov=. --cov-report=term-missing"
+addopts = "-v --strict-markers --cov=. --cov-report=term-missing --cov-report=html --cov-report=xml"
 pythonpath = ["."]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+]
 
 [tool.coverage.run]
 source = ["."]
@@ -75,8 +67,7 @@ omit = [
     "*/test_*.py",
     "*/__pycache__/*",
     "*/venv/*",
-    "*/env/*",
-    "setup.py",
+    "*/.venv/*",
 ]
 
 [tool.coverage.report]
