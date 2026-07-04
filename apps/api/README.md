@@ -1,336 +1,151 @@
 # Thai Food Image Classification API
 
-A REST API service that uses deep learning to automatically identify Thai dishes from uploaded images. The API leverages pre-trained Keras/TensorFlow models (MobileNet and Xception) to classify 72 different Thai food dishes, returning predictions with percentage scores in both Thai and English.
+A REST API that identifies Thai dishes from uploaded images using deep learning. Returns top-5 predictions with Thai and English names and confidence percentages.
 
-## Features
+## Endpoints
 
-- **Deep Learning Classification**: Uses state-of-the-art CNN models (MobileNet/Xception)
-- **Dual Language Support**: Returns predictions in both Thai and English
-- **Image Hosting**: Optionally uploads images to Imgur (skipped if no client ID configured)
-- **Rate Limiting**: Built-in protection (3 requests per IP per minute)
-- **Result Storage**: MongoDB integration for storing predictions
-- **RESTful API**: Simple HTTP endpoints for easy integration
-- **Cloud-Ready**: Configured for Vercel deployment
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/upload` | Upload image for classification |
+| GET | `/api/result/<resultId>` | Retrieve stored prediction |
+| GET | `/health` | Health check |
 
-## Tech Stack
+### POST /api/upload
 
-- **Backend**: Flask 2.0.0
-- **Machine Learning**: TensorFlow 2.11.0, Keras 2.11.0
-- **Database**: MongoDB 4.3.3
-- **Image Storage**: Imgur API
-- **Deployment**: Vercel (serverless)
+Upload an image and receive Thai food predictions.
 
-## Prerequisites
+**Content-Type:** `multipart/form-data`
 
-- Python 3.8 or higher
-- MongoDB instance (local or cloud)
-- Imgur API credentials
-- Git
-
-## Installation
-
-This service lives at `apps/api/` within the [thai-food-classifier](../../README.md) monorepo. To run it standalone (without Docker):
-
-### 1. Create a virtual environment
-
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-# Install package in development mode (for src imports)
-pip install -e .
-```
-
-### 4. Configure environment variables
-
-Copy the example environment file and fill in your credentials:
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` with your configuration:
-
-```env
-IMGUR_CLIENT_ID=your_imgur_client_id_here
-MONGO_URI=mongodb://localhost:27017/
-MONGO_DATABASE=thai_food_api
-```
-
-#### Getting Imgur API Credentials
-
-1. Go to [Imgur API](https://api.imgur.com/oauth2/addclient)
-2. Register your application
-3. Copy the Client ID
-
-#### MongoDB Setup
-
-**Option A: Local MongoDB**
-```bash
-# Install MongoDB locally
-# macOS
-brew install mongodb-community
-
-# Ubuntu
-sudo apt-get install mongodb
-
-# Start MongoDB
-mongod
-```
-
-**Option B: MongoDB Atlas (Cloud)**
-1. Create account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Create a free cluster
-3. Get connection string (replace `<password>` with your password)
-4. Use in `MONGO_URI`
-
-### 5. Run the application
-
-```bash
-python index.py
-```
-
-The API will be available at `http://localhost:5000`
-
-## API Documentation
-
-### Upload and Classify Image
-
-Upload an image file and get Thai food predictions.
-
-**Endpoint**: `POST /api/upload`
-
-**Request**:
-- Method: `POST`
-- Content-Type: `multipart/form-data`
-
-**Parameters**:
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| image | File | Yes | Image file (max 5MB) |
-| model | String | No | Model to use: `mobilenet` or `xception` (default: `xception`) |
+| image | File | Yes | Image file (max 5 MB) |
+| model | String | No | `mobilenet` or `xception` (default: `xception`) |
 
-**Example Request**:
+**Example:**
 ```bash
 curl -X POST http://localhost:5000/api/upload \
-  -F "image=@/path/to/food_image.jpg" \
-  -F "model=xception"
+  -F "image=@photo.jpg" \
+  -F "model=mobilenet"
 ```
 
-**Success Response** (201 Created):
+**Success Response (201):**
 ```json
 {
   "resultId": "507f1f77bcf86cd799439011",
   "predict_result": [
-    {
-      "name_en": "Pad Thai",
-      "name_th": "ผัดไทย",
-      "percent": 95.23
-    },
-    {
-      "name_en": "Pad See Ew",
-      "name_th": "ผัดซีอิ๊ว",
-      "percent": 2.15
-    },
-    {
-      "name_en": "Drunken Noodles",
-      "name_th": "ผัดขี้เมา",
-      "percent": 1.42
-    },
-    {
-      "name_en": "Fried Rice",
-      "name_th": "ข้าวผัด",
-      "percent": 0.89
-    },
-    {
-      "name_en": "Tom Yum",
-      "name_th": "ต้มยำ",
-      "percent": 0.31
-    }
+    { "name_en": "Pad Thai", "name_th": "ผัดไทย", "percent": 95.23 },
+    { "name_en": "Pad See Ew", "name_th": "ผัดซีอิ๊ว", "percent": 2.15 },
+    { "name_en": "Drunken Noodles", "name_th": "ผัดขี้เมา", "percent": 1.42 },
+    { "name_en": "Fried Rice", "name_th": "ข้าวผัด", "percent": 0.89 },
+    { "name_en": "Tom Yum", "name_th": "ต้มยำ", "percent": 0.31 }
   ],
   "status": "success",
   "message": "uploaded successfully"
 }
 ```
 
-**Error Responses**:
+Response fields: `name_en` (string), `name_th` (string), `percent` (float, 0–100, 2 dp).
 
-- `400 Bad Request`: Missing image file or invalid request
-- `429 Too Many Requests`: Rate limit exceeded (3 requests per minute per IP)
-- `413 Payload Too Large`: Image exceeds 5MB
+**Error Responses:**
+- `400` — Missing image file or empty filename
+- `429` — Rate limit exceeded (3 requests per IP per minute)
+- `413` — Image exceeds 5 MB
+- `500` — Internal server error
 
-### Get Result by ID
+### GET /api/result/:resultId
 
-Retrieve previously stored prediction results.
-
-**Endpoint**: `GET /api/result/<resultId>`
-
-**Example Request**:
-```bash
-curl http://localhost:5000/api/result/507f1f77bcf86cd799439011
-```
-
-**Success Response** (200 OK):
+**Success Response (200):**
 ```json
 {
   "status": "success",
   "predict_result": [
-    {
-      "name_en": "Pad Thai",
-      "name_th": "ผัดไทย",
-      "percent": 95.23
-    }
+    { "name_en": "Pad Thai", "name_th": "ผัดไทย", "percent": 95.23 }
   ],
   "image_url": "https://i.imgur.com/abc123.jpg"
 }
 ```
 
-**Error Response**:
-- `404 Not Found`: Result ID does not exist
+`image_url` is `null` when Imgur is not configured.
 
-## Supported Thai Dishes
+## Environment Variables
 
-The API can classify 72 different Thai dishes including:
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `MONGO_URI` | Yes | `mongodb://localhost:27017/` | MongoDB connection string |
+| `MONGO_DATABASE` | No | `thai_food_api` | Database name |
+| `IMGUR_CLIENT_ID` | No | (empty) | Imgur API client ID; uploads skipped if unset |
+| `HF_MODEL_REPO` | No | `PlaiPunlawat/thai-food-classifier` | Hugging Face repo for model weights |
+| `FLASK_ENV` | No | `development` | Flask environment |
+| `FLASK_DEBUG` | No | `False` | Enable debug mode (local dev only) |
 
-- Pad Thai (ผัดไทย)
-- Tom Yum Goong (ต้มยำกุ้ง)
-- Green Curry (แกงเขียวหวาน)
-- Massaman Curry (แกงมัสมั่น)
-- Som Tam (ส้มตำ)
-- And 67 more...
+## Models
 
-See `packages/shared/food_labels.json` in the monorepo root for the complete list.
+| Model | File | Download Size | Input Size | Notes |
+|-------|------|--------------|------------|-------|
+| MobileNet | `MobileNet.h5` | ~44 MB | 128×128 | Faster inference |
+| Xception | `Xception.h5` | ~333 MB | 128×128 | Higher accuracy |
 
-## Model Information
+Weights are downloaded from Hugging Face Hub on first prediction and cached in `models/`. In Docker, the `hf_models` volume persists weights across container restarts.
 
-### MobileNet
-- **Size**: ~17 MB
-- **Speed**: Faster inference
-- **Use case**: Production environments requiring quick responses
+## Local Development (without Docker)
 
-### Xception
-- **Size**: ~88 MB
-- **Speed**: Slower but more accurate
-- **Use case**: When accuracy is more important than speed
-
-## Deployment
-
-### Deploy to Vercel
-
-The project is pre-configured for Vercel deployment:
+Prerequisites: Python 3.10, MongoDB running locally.
 
 ```bash
-# Install Vercel CLI
-npm install -g vercel
+cd apps/api
 
-# Deploy
-vercel
+# Install uv if not already installed
+# See https://docs.astral.sh/uv/getting-started/installation/
+
+# Install dependencies
+uv sync
+
+# Run the dev server
+uv run python index.py
 ```
 
-Configuration is in `vercel.json`.
+Set `PYTHONPATH` to include the repo root and shared package:
+```bash
+export PYTHONPATH=/path/to/thai-food-classifier:/path/to/thai-food-classifier/packages/shared
+```
 
-### Environment Variables on Vercel
+## Running Tests
 
-Add these environment variables in your Vercel project settings:
-- `IMGUR_CLIENT_ID`
-- `MONGO_URI`
-- `MONGO_DATABASE`
+```bash
+cd apps/api
+uv sync --dev
+uv run pytest tests/ -v
+```
 
-## Development
+Tests run without network, MongoDB, or model files — all external dependencies are mocked.
 
-### Project Structure
+## Project Structure
 
 ```
 apps/api/
-├── index.py              # Flask application entry point
+├── index.py                # Flask app entry point + route registration
 ├── src/
 │   ├── api/
-│   │   └── routes.py    # API route handlers
+│   │   └── routes.py       # Request handling, validation, orchestration
 │   ├── config/
-│   │   └── food_names.py # Label config (imports from packages/shared)
-│   └── services/
-│       ├── prediction_service.py  # Model loading and inference
-│       ├── database_service.py    # MongoDB operations
-│       └── image_service.py       # Imgur upload
-├── requirements.txt      # Python dependencies
-├── vercel.json          # Vercel deployment config
-├── .env.example         # Environment template
-└── models/              # .gitignored; populated from HF Hub at runtime
-```
-
-### Running in Development Mode
-
-```bash
-# Activate virtual environment
-source venv/bin/activate
-
-# Run with debug enabled (local only)
-python index.py
+│   │   ├── settings.py     # Environment-based configuration
+│   │   └── food_names.py   # Adapter over packages/shared/food_labels.json
+│   ├── services/
+│   │   ├── prediction_service.py  # Model loading, preprocessing, inference
+│   │   ├── database_service.py    # MongoDB operations, rate limiting
+│   │   └── image_service.py       # Imgur upload
+│   └── utils/
+│       └── logger.py       # Logging setup
+├── tests/                  # pytest test suite (23 tests)
+├── models/                 # .gitignored; populated from HF Hub at runtime
+├── pyproject.toml          # Dependencies and tool config
+└── uv.lock                 # Deterministic dependency lockfile
 ```
 
 ## Rate Limiting
 
-To prevent abuse, the API implements rate limiting:
-- **Limit**: 3 requests per IP address per minute
-- **Storage**: Tracked in MongoDB
-- **Response**: HTTP 429 when limit exceeded
-
-## Security Considerations
-
-- Maximum upload size: 5 MB
-- File type validation recommended (not currently implemented)
-- Rate limiting prevents abuse
-- Environment variables protect sensitive credentials
-- CORS enabled for cross-origin requests
-
-## Troubleshooting
-
-### Common Issues
-
-**Issue**: MongoDB connection error
-```
-Solution: Ensure MongoDB is running and MONGO_URI is correct
-```
-
-**Issue**: Imgur upload fails
-```
-Solution: Check IMGUR_CLIENT_ID is valid
-```
-
-**Issue**: Model not found error
-```
-Solution: Ensure .h5 model files exist in models/ directory
-```
-
-**Issue**: Memory error during prediction
-```
-Solution: Try using MobileNet instead of Xception (smaller model)
-```
+3 requests per IP address per minute, tracked in MongoDB. Note: behind a reverse proxy, all requests may appear from the gateway IP (see [KNOWN_ISSUES.md](../../KNOWN_ISSUES.md)).
 
 ## Contributing
 
-See [CONTRIBUTING.md](../../CONTRIBUTING.md) in the monorepo root for contribution guidelines.
-
-## License
-
-This project is available for educational and personal use.
-
-## Acknowledgments
-
-- TensorFlow and Keras teams for the deep learning frameworks
-- Pre-trained model architectures: MobileNet and Xception
-- Imgur for image hosting API
-- MongoDB for data storage
-
-## Contact
-
-For questions or issues, please open an issue on GitHub.
-
----
-
-**Note**: This API is designed for educational purposes. For production use, consider implementing additional security measures, authentication, and comprehensive error handling.
+See [CONTRIBUTING.md](../../CONTRIBUTING.md) in the monorepo root.
